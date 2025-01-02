@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Models\Permission;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Role;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 
 class MemberRoleSeeder extends Seeder
 {
@@ -16,7 +15,7 @@ class MemberRoleSeeder extends Seeder
      */
     public function run(): void
     {
-        $role = Role::findOrCreate('team member');
+        $role = Role::findOrCreate(Role::TEAM_MEMBER);
         $viewMembers = Permission::findOrCreate(Permission::VIEW_TEAM_MEMBERS);
 
         $role->givePermissionTo($viewMembers);

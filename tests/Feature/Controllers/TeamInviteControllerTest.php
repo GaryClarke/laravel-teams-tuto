@@ -7,6 +7,7 @@ use App\Mail\TeamInvitation;
 use App\Models\Team;
 use App\Models\TeamInvite;
 use App\Models\User;
+use Illuminate\Routing\Middleware\ValidateSignature;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use Illuminate\Support\Str;
@@ -151,4 +152,43 @@ it('can not revoke an invite without permission', function () {
         ->withoutMiddleware(TeamsPermission::class)
         ->delete(route('team.invites.destroy', [$anotherTeam, $teamInvite]))
         ->assertForbidden();
+});
+
+it('fails to accept invite if route is not signed', function () {
+    $team = Team::factory()->create();
+
+    $invite = TeamInvite::factory()
+        ->for($team)
+        ->create();
+
+    $acceptingUser = User::factory()->create();
+
+    actingAs($acceptingUser)
+        ->get('/team/invites/accept?token=' . $invite->token)
+        ->assertForbidden();
+});
+
+it('can accept an invite', function() {
+    $team = Team::factory()->create();
+
+    $invite = TeamInvite::factory()
+        ->for($team)
+        ->create();
+
+    $acceptingUser = User::factory()->create();
+
+    actingAs($acceptingUser)
+        ->withoutMiddleware(ValidateSignature::class)
+        ->get('/team/invites/accept?token=' . $invite->token)
+        ->assertRedirect('/dashboard');
+
+    assertDatabaseMissing('team_invites', [
+        'team_id' => $invite->team_id,
+        'token' => $invite->token,
+        'email' => $invite->email
+    ]);
+
+    expect($acceptingUser->teams->contains($invite->team))->toBeTrue()
+        ->and($acceptingUser->hasRole(\App\Models\Role::TEAM_MEMBER))->toBeTrue()
+        ->and($acceptingUser->current_team_id)->toBe($invite->team->id);
 });

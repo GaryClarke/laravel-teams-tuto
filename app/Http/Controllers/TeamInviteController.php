@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TeamInviteStoreRequest;
 use App\Http\Requests\TeamMemberDestroyRequest;
 use App\Mail\TeamInvitation;
+use App\Models\Role;
 use App\Models\Team;
 use App\Models\TeamInvite;
 use Carbon\CarbonImmutable;
@@ -18,6 +19,7 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Spatie\Permission\PermissionRegistrar;
 
 class TeamInviteController extends Controller
 {
@@ -25,6 +27,7 @@ class TeamInviteController extends Controller
         readonly private Redirector $redirectRouter,
         readonly private Mailer $mailer,
         readonly private UrlGenerator $urlGenerator,
+        readonly private PermissionRegistrar $permissionRegistrar
     ) {
     }
 
@@ -55,6 +58,21 @@ class TeamInviteController extends Controller
 
     public function accept(Request $request): RedirectResponse
     {
-        dd($request->input('token'));
+        $token = $request->get('token');
+        $user = $request->user();
+
+        $invite = TeamInvite::where('token', $token)->firstOrFail();
+
+        $user->teams()->attach($invite->team);
+
+        $this->permissionRegistrar->setPermissionsTeamId($invite->team->id);
+        $user->assignRole(Role::TEAM_MEMBER);
+
+        $user->current_team_id = $invite->team->id;
+        $user->save();
+
+        $invite->delete();
+
+        return $this->redirectRouter->route('dashboard');
     }
 }

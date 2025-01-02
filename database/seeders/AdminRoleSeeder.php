@@ -23,11 +23,13 @@ class AdminRoleSeeder extends Seeder
         $removeMembers = Permission::findOrCreate(Permission::REMOVE_TEAM_MEMBERS);
         $inviteMembers = Permission::findOrCreate(Permission::INVITE_TO_TEAM);
         $revokeInvitation = Permission::findOrCreate(Permission::REVOKE_INVITATION);
+        $changeMemberRole = Permission::findOrCreate(Permission::CHANGE_MEMBER_ROLE);
 
         $role->givePermissionTo($updateTeam);
         $role->givePermissionTo($viewMembers);
         $role->givePermissionTo($removeMembers);
         $role->givePermissionTo($inviteMembers);
         $role->givePermissionTo($revokeInvitation);
+        $role->givePermissionTo($changeMemberRole);
     }
 }

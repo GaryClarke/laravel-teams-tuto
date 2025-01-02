@@ -9,4 +9,5 @@ use Spatie\Permission\Models\Role as SpatieRole;
 class Role extends SpatieRole
 {
     public const string TEAM_ADMIN = 'team admin';
+    public const string TEAM_MEMBER = 'team member';
 }
