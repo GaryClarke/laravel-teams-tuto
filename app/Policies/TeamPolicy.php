@@ -65,4 +65,9 @@ class TeamPolicy
     {
         return $user->can(Permission::REVOKE_INVITATION);
     }
+
+    public function changeMemberRole(User $user, Team $team, User $member): bool
+    {
+        return $user->can(Permission::CHANGE_MEMBER_ROLE);
+    }
 }
