@@ -54,11 +54,20 @@ class TeamPolicy
 
     public function inviteToTeam(User $user, Team $team): bool
     {
-//        if (!$user->teams->contains($team)) {
-//            return false;
-//        }
+        if (!$user->teams->contains($team)) {
+            return false;
+        }
 
         return $user->can(Permission::INVITE_TO_TEAM);
+    }
+
+    public function viewTeamMembers(User $user, Team $team): bool
+    {
+        if (!$user->teams->contains($team)) {
+            return false;
+        }
+
+        return $user->can(Permission::VIEW_TEAM_MEMBERS);
     }
 
     public function revokeInvite(User $user, Team $team): bool

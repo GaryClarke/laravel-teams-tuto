@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            @can(\App\Models\Permission::UPDATE_TEAM, $team)
+            @can('update-team', $team)
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <div class="max-w-xl">
                         @include('team.partials.update-team-form')
@@ -15,7 +15,7 @@
                 </div>
             @endcan
 
-            @can(\App\Models\Permission::VIEW_TEAM_MEMBERS, $team)
+            @can('view-team-members', $team)
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <div class="max-w-xl">
                         @include('team.partials.team-members')
@@ -23,7 +23,7 @@
                 </div>
             @endcan
 
-            @can('leaveTeam', $team)
+            @can('leave-team', $team)
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <div class="max-w-xl">
                         <form action="{{ route('team.leave', $team) }}" method="post">
