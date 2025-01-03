@@ -68,6 +68,10 @@ class TeamPolicy
 
     public function changeMemberRole(User $user, Team $team, User $member): bool
     {
+        if (!$team->members->contains($member)) {
+            return false;
+        }
+
         return $user->can(Permission::CHANGE_MEMBER_ROLE);
     }
 }

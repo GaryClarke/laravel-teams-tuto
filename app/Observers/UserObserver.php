@@ -9,7 +9,7 @@ use App\Models\Team;
 use App\Models\User;
 use Spatie\Permission\PermissionRegistrar;
 
-class UserObserver
+readonly class UserObserver
 {
     public function __construct(
         private PermissionRegistrar $permissionRegistrar

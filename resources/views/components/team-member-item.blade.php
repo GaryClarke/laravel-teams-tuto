@@ -49,17 +49,21 @@
 
     @can('change-member-role', [auth()->user()->currentTeam, $member])
         <x-modal name="change-member-{{ $member->id }}-role" focusable>
-            <form method="post" action="" class="p-6">
+            <form method="post" action="{{ route('team.members.update', [$team, $member]) }}" class="p-6">
                 @csrf
+                @method('PATCH')
 
                 <h2 class="text-lg font-medium text-gray-900">
                     Change role for {{ $member->name }} ({{ $member->email }})
                 </h2>
 
                 <div class="mt-6">
-                    <x-select-input class="w-full">
+                    <x-input-label for="role" value="Role" class="sr-only"/>
+                    <x-select-input class="w-full" name="role" id="role">
                         @foreach(\App\Models\Role::all() as $role)
-                            <option value="{{ $role->name }}" @selected($member->hasRole($role))>{{ $role->name }}</option>
+                            <option value="{{ $role->name }}" @selected($member->hasRole($role))>
+                                {{ $role->name }}
+                            </option>
                         @endforeach
                     </x-select-input>
                 </div>
